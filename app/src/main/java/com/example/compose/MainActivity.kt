@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,137 +25,270 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Text(text = "Compose App")
             Layout()
+
+
 
         }
     }
 }
+
 @Preview()
 @Composable
-fun Layout(){
-    var number = remember {
-        mutableStateOf("")
+fun Layout(
+
+){
+    val number = remember { mutableStateOf("") }
+    val canAddDecimal = remember{ mutableStateOf(true) }
+    val canAddOperator  = remember { mutableStateOf(false) }
+
+    fun getNumber(i:String){
+        if(i == "." && canAddDecimal.value){
+            number.value+=i
+
+            canAddDecimal.value = false
+        }
+        else{
+            number.value+=i
+
+        }
+        canAddOperator.value = true
     }
-    var canAddDecimal = remember{ mutableStateOf(true) }
-    var canAddOperator  = remember { mutableStateOf(false) }
 
+    fun getOperator(i:String){
+        if(canAddOperator.value){
+            number.value += i
+            canAddOperator.value = false
+        }
+    }
+
+    fun allClear(i:String){
+
+        number.value=""
+    }
+
+    fun backSpace(i:String){
+        val len = i.length
+        if(len>0){
+        number.value = i.substring(0,len-1)
+        canAddOperator.value=true}
+
+    }
+Box(
+    modifier = Modifier.height(850.dp).background(Color.Black)
+
+) {
     Column(
-        modifier = Modifier.fillMaxWidth(1f)
+        modifier = Modifier
+            .height(850.dp),
+        verticalArrangement = Arrangement.Bottom
     ) {
-        Text(text=number.value)
-
-            Row(
-
-            ) {
-                for(i in 9 downTo  7)
-                Button(
-                    onClick = {
-                        number.value+=i.toString()
-                        canAddOperator.value=true
-                    },
-
-                    ){
-                   Text(text = i.toString())
-
-                }
-                Button(onClick = {
-                    if(canAddOperator.value){
-                    number.value+="+"
-                    canAddOperator.value=false}
-                }){
-                    Text(text="+",color= Color.Red)
-                }
-            }
-            Row() {
-                for(i in 6 downTo  4){
-                    Button(
-                        onClick = {
-                            number.value+=i.toString()
-                            canAddOperator.value=true
-                        },
-                        ){
-                        Text(text = i.toString()) }}
-                Button(onClick = {
-                    if(canAddOperator.value){
-                        number.value+="-"
-                        canAddOperator.value=false}
-                }){
-                    Text(text="-",color= Color.Red)
-                }
-
-            }
-            Row() {
-                for(i in 3 downTo  1)
-                     Button(
-                         onClick = {
-                             number.value+=i.toString()
-                             canAddOperator.value=true},
-                         ){
-                         Text(text = i.toString())
+        Text(text=number.value, fontSize = 24.sp, textAlign = TextAlign.End,modifier = Modifier
+            .padding(30.dp)
+            .fillMaxWidth(), color = Color.Gray
+        )
 
 
-                    }
-                    Button(onClick = {
-                        if(canAddOperator.value){
-                            number.value+="*"
-                            canAddOperator.value=false}
-                    }){
-                        Text(text="*",color= Color.Red)
-                    }
-            }
-            Row(){
-               Button(
-                   onClick = {
-                       number.value = ""
-                       canAddDecimal.value = true
-                       canAddOperator.value = false
-                   }
-               )
-               {
-                   Text(
-                       text="AC",
-                       color=Color.Red
-                   )
-               }
-                Button(
-                    onClick = {
-                        number.value+="0"
-                        canAddOperator.value=true
-                    }
-                ){
-                    Text(text="0")
-                }
-                Button(
-                    onClick={
-                        var len = number.value.length
-                        if(len>0){
-                        number.value = number.value.substring(0,len-1)
-                        Log.d("Clicked","$len")}
-                    }
-
-                ){
-                    Text(text="⌫ ")
-                }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
 
 
+        ){
+            Button(
+                onClick = {
+                    allClear(number.value)
 
+                },modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
 
+            )
+            {
+                Text(
+                    text="AC",
+                    color=Color.Red
+                )
             }
             Button(
                 onClick={
-                    if(number.value.length>0){
-                    val result = number.value
-                    val answer = Expression(result).calculate()
-                    number.value = answer.toString()}
+                    backSpace(number.value)
+                },modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
 
+
+            ){
+                Text(text="⌫ ")
+            }
+
+
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+
+
+        ) {
+            for(i in 9 downTo  7)
+                Button(
+                    onClick = {
+                        getNumber(i.toString())
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+
+                ){
+                    Text(text = i.toString())
+
+                }
+            Button(onClick = {
+                getOperator("+")
+
+            },                       modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+            ){
+                Text(text="+",color= Color.Red)
+            }
+        }
+
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+
+        ) {
+            for(i in 6 downTo  4){
+                Button(
+                    onClick = {
+                        getNumber(i.toString())
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+                ){
+                    Text(text = i.toString()) }}
+            Button(onClick = {getOperator("-")},                     modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+            ){
+                Text(text="-",color= Color.Red)
+            }
+
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+
+        ) {
+
+            for(i in 3 downTo  1)
+                Button(
+                    onClick = {
+                        getNumber(i.toString())},                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+                ){
+                    Text(text = i.toString())
 
 
                 }
+            Button(onClick = { getOperator("*")} ,                    modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+            )
+            {
+                Text(text="*",color= Color.Red)
+            }
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+
+        ){
+            Button(
+                onClick = {
+                    getNumber(".")
+
+                },modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+
+            )
+            {
+                Text(
+                    text=".",
+
+                    )
+            }
+
+            Button(
+                onClick = {
+                    getNumber("0")
+                },modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+
+            ){
+                Text(text="0")
+            }
+
+            Button(
+
+                onClick={
+                    if(number.value.length>0){
+                        val result = number.value
+                        val answer = Expression(result).calculate()
+                        number.value = answer.toString()}
+
+
+
+                },modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+
             ){
                 Text(text="=")
             }
+
+
+            Button(
+                onClick = {
+                    getOperator("/")
+                },modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+
+            ){
+                Text(text="/", color = Color.Red)
+            }
+
+
+
+
+
+
+        }
+
     }
+}
+
+
 
 }
 
