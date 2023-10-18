@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.compose.ui.theme.ComposeTheme
+import org.mariuszgromada.math.mxparser.Expression
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +36,8 @@ fun Layout(){
     var number = remember {
         mutableStateOf("")
     }
+    var canAddDecimal = remember{ mutableStateOf(true) }
+    var canAddOperator  = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.fillMaxWidth(1f)
@@ -42,29 +45,41 @@ fun Layout(){
         Text(text=number.value)
 
             Row(
-                horizontalArrangement = Arrangement.SpaceAround
+
             ) {
                 for(i in 9 downTo  7)
                 Button(
                     onClick = {
                         number.value+=i.toString()
+                        canAddOperator.value=true
                     },
 
                     ){
                    Text(text = i.toString())
 
                 }
-                Button(onClick = {}){
+                Button(onClick = {
+                    if(canAddOperator.value){
+                    number.value+="+"
+                    canAddOperator.value=false}
+                }){
                     Text(text="+",color= Color.Red)
                 }
             }
             Row() {
                 for(i in 6 downTo  4){
                     Button(
-                        onClick = { },
+                        onClick = {
+                            number.value+=i.toString()
+                            canAddOperator.value=true
+                        },
                         ){
                         Text(text = i.toString()) }}
-                Button(onClick = {}){
+                Button(onClick = {
+                    if(canAddOperator.value){
+                        number.value+="-"
+                        canAddOperator.value=false}
+                }){
                     Text(text="-",color= Color.Red)
                 }
 
@@ -72,28 +87,72 @@ fun Layout(){
             Row() {
                 for(i in 3 downTo  1)
                      Button(
-                         onClick = { },
+                         onClick = {
+                             number.value+=i.toString()
+                             canAddOperator.value=true},
                          ){
                          Text(text = i.toString())
 
 
                     }
-                    Button(onClick = {}){
+                    Button(onClick = {
+                        if(canAddOperator.value){
+                            number.value+="*"
+                            canAddOperator.value=false}
+                    }){
                         Text(text="*",color= Color.Red)
                     }
             }
             Row(){
-                for(i in 3 downTo 0){
-                    Button(onClick = { /*TODO*/ }) {
-                        when(i){
-                            1->Text(text="<=")
-                            2->Text(text="0")
-                            3->Text(text="AC")
-                            0->Text(text=".",color= Color.Red)
-                        }
-
+               Button(
+                   onClick = {
+                       number.value = ""
+                       canAddDecimal.value = true
+                       canAddOperator.value = false
+                   }
+               )
+               {
+                   Text(
+                       text="AC",
+                       color=Color.Red
+                   )
+               }
+                Button(
+                    onClick = {
+                        number.value+="0"
+                        canAddOperator.value=true
                     }
+                ){
+                    Text(text="0")
                 }
+                Button(
+                    onClick={
+                        var len = number.value.length
+                        if(len>0){
+                        number.value = number.value.substring(0,len-1)
+                        Log.d("Clicked","$len")}
+                    }
+
+                ){
+                    Text(text="⌫ ")
+                }
+
+
+
+
+            }
+            Button(
+                onClick={
+                    if(number.value.length>0){
+                    val result = number.value
+                    val answer = Expression(result).calculate()
+                    number.value = answer.toString()}
+
+
+
+                }
+            ){
+                Text(text="=")
             }
     }
 
