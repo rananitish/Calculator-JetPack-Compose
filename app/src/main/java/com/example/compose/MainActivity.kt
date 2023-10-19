@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.compose.ui.theme.ComposeTheme
 import org.mariuszgromada.math.mxparser.Expression
+import java.lang.Double.NaN
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +40,7 @@ class MainActivity : ComponentActivity() {
 fun Layout(
 
 ){
-    var fontSize = 18.dp
+
     val number = remember { mutableStateOf("") }
     val canAddDecimal = remember { mutableStateOf(true) }
     val canAddOperator  = remember { mutableStateOf(false) }
@@ -50,8 +51,9 @@ fun Layout(
 
             canAddDecimal.value = false
         }
-        else{
+        else if (i!="."){
             number.value+=i
+
 
         }
         canAddOperator.value = true
@@ -60,17 +62,22 @@ fun Layout(
         if(canAddOperator.value){
             number.value += i
             canAddOperator.value = false
+            canAddDecimal.value = true
         }
     }
     fun allClear(i:String){
 
         number.value=""
+        canAddOperator.value = false
+        canAddDecimal.value = true
     }
     fun backSpace(i:String){
         val len = i.length
+        if(i[len-1]=='.') canAddDecimal.value = true
         if(len>0){
         number.value = i.substring(0,len-1)
-        canAddOperator.value=true}
+        canAddOperator.value=true
+        }
 
     }
 
@@ -255,9 +262,14 @@ Box(
 
                 onClick={
                     if(number.value.length>0){
+
                         val result = number.value
                         val answer = Expression(result).calculate()
-                        number.value = answer.toString()}
+                        if(answer!= NaN)
+                        number.value = answer.toString()
+                        else number.value = "Error"
+
+                    }
 
 
 
