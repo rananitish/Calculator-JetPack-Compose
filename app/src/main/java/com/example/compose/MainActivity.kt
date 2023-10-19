@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,8 +39,9 @@ class MainActivity : ComponentActivity() {
 fun Layout(
 
 ){
+    var fontSize = 18.dp
     val number = remember { mutableStateOf("") }
-    val canAddDecimal = remember{ mutableStateOf(true) }
+    val canAddDecimal = remember { mutableStateOf(true) }
     val canAddOperator  = remember { mutableStateOf(false) }
 
     fun getNumber(i:String){
@@ -54,19 +56,16 @@ fun Layout(
         }
         canAddOperator.value = true
     }
-
     fun getOperator(i:String){
         if(canAddOperator.value){
             number.value += i
             canAddOperator.value = false
         }
     }
-
     fun allClear(i:String){
 
         number.value=""
     }
-
     fun backSpace(i:String){
         val len = i.length
         if(len>0){
@@ -74,18 +73,20 @@ fun Layout(
         canAddOperator.value=true}
 
     }
+
+
 Box(
-    modifier = Modifier.height(850.dp).background(Color.Black)
+    modifier = Modifier.background(Color.Black)
 
 ) {
     Column(
-        modifier = Modifier
-            .height(850.dp),
+        modifier = Modifier.height(850.dp),
         verticalArrangement = Arrangement.Bottom
     ) {
-        Text(text=number.value, fontSize = 24.sp, textAlign = TextAlign.End,modifier = Modifier
+        Text(text=number.value, fontSize = 24.sp, textAlign = TextAlign.End, modifier = Modifier
             .padding(30.dp)
-            .fillMaxWidth(), color = Color.Gray
+            .fillMaxWidth(),
+            color = Color.Gray
         )
 
 
@@ -107,7 +108,8 @@ Box(
             {
                 Text(
                     text="AC",
-                    color=Color.Red
+                    color=Color.Red,
+                    fontSize = 18.sp
                 )
             }
             Button(
@@ -118,7 +120,7 @@ Box(
 
 
             ){
-                Text(text="⌫ ")
+                Text(text="⌫ ",fontSize = 18.sp)
             }
 
 
@@ -141,18 +143,18 @@ Box(
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
 
                 ){
-                    Text(text = i.toString())
+                    Text(text = i.toString(),fontSize = 18.sp)
 
                 }
             Button(onClick = {
                 getOperator("+")
 
-            },                       modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight(),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+                },modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
             ){
-                Text(text="+",color= Color.Red)
+                Text(text="+",color= Color.Red,fontSize = 18.sp)
             }
         }
 
@@ -173,13 +175,14 @@ Box(
                         .fillMaxHeight(),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
                 ){
-                    Text(text = i.toString()) }}
-            Button(onClick = {getOperator("-")},                     modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight(),
+                    Text(text = i.toString(), fontSize = 18.sp) }}
+            Button(onClick = {getOperator("-")},                     
+                modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
             ){
-                Text(text="-",color= Color.Red)
+                Text(text="-",color= Color.Red, fontSize = 22.sp, fontWeight = FontWeight.Bold )
             }
 
         }
@@ -198,17 +201,18 @@ Box(
                         .fillMaxHeight(),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
                 ){
-                    Text(text = i.toString())
+                    Text(text = i.toString(), fontSize = 18.sp)
 
 
                 }
-            Button(onClick = { getOperator("*")} ,                    modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight(),
+            Button(onClick = { getOperator("*")} ,
+                modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
             )
             {
-                Text(text="*",color= Color.Red)
+                Text(text="*",color= Color.Red, fontSize = 18.sp)
             }
         }
         Row(
@@ -230,6 +234,7 @@ Box(
             {
                 Text(
                     text=".",
+                    fontSize = 18.sp
 
                     )
             }
@@ -243,7 +248,7 @@ Box(
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
 
             ){
-                Text(text="0")
+                Text(text="0", fontSize = 18.sp)
             }
 
             Button(
@@ -262,7 +267,7 @@ Box(
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
 
             ){
-                Text(text="=")
+                Text(text="=", fontSize = 18.sp)
             }
 
 
@@ -275,7 +280,7 @@ Box(
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
 
             ){
-                Text(text="/", color = Color.Red)
+                Text(text="/", color = Color.Red, fontSize = 22.sp)
             }
 
 
